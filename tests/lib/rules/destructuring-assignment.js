@@ -17,7 +17,7 @@ const parserOptions = {
   }
 };
 
-const ruleTester = new RuleTester({parserOptions});
+const ruleTester = new RuleTester({ parserOptions });
 ruleTester.run('destructuring-assignment', rule, {
   valid: [{
     code: `const MyComponent = ({ id, className }) => (
@@ -163,7 +163,7 @@ ruleTester.run('destructuring-assignment', rule, {
         bar = this.props.bar
       }
     `,
-    options: ['always', {ignoreClassFields: true}],
+    options: ['always', { ignoreClassFields: true }],
     parser: parsers.BABEL_ESLINT
   }, {
     code: [
@@ -174,16 +174,27 @@ ruleTester.run('destructuring-assignment', rule, {
       '  }',
       '}'
     ].join('\n'),
-    options: ['always', {ignoreClassFields: true}],
+    options: ['always', { ignoreClassFields: true }],
     parser: parsers.BABEL_ESLINT
+  }, {
+    code: `const MyComponent = (props) => {
+      const {foo} = useContext(aContext);
+      return <div>{foo}</div>
+    };`,
+    options: ['always']
+  }, {
+    code: `const MyComponent = (props) => {
+      const foo = useContext(aContext);
+      return <div>{foo.test}</div>
+    };`,
+    options: ['never']
   }],
-
   invalid: [{
     code: `const MyComponent = (props) => {
       return (<div id={props.id} />)
     };`,
     errors: [
-      {message: 'Must use destructuring props assignment'}
+      { message: 'Must use destructuring props assignment' }
     ]
   }, {
     code: `const MyComponent = ({ id, className }) => (
@@ -191,7 +202,7 @@ ruleTester.run('destructuring-assignment', rule, {
     );`,
     options: ['never'],
     errors: [
-      {message: 'Must never use destructuring props assignment in SFC argument'}
+      { message: 'Must never use destructuring props assignment in SFC argument' }
     ]
   }, {
     code: `const MyComponent = (props, { color }) => (
@@ -199,7 +210,7 @@ ruleTester.run('destructuring-assignment', rule, {
     );`,
     options: ['never'],
     errors: [
-      {message: 'Must never use destructuring context assignment in SFC argument'}
+      { message: 'Must never use destructuring context assignment in SFC argument' }
     ]
   }, {
     code: `const Foo = class extends React.PureComponent {
@@ -208,7 +219,7 @@ ruleTester.run('destructuring-assignment', rule, {
       }
     };`,
     errors: [
-      {message: 'Must use destructuring props assignment'}
+      { message: 'Must use destructuring props assignment' }
     ]
   }, {
     code: `const Foo = class extends React.PureComponent {
@@ -217,7 +228,7 @@ ruleTester.run('destructuring-assignment', rule, {
       }
     };`,
     errors: [
-      {message: 'Must use destructuring state assignment'}
+      { message: 'Must use destructuring state assignment' }
     ]
   }, {
     code: `const Foo = class extends React.PureComponent {
@@ -226,7 +237,7 @@ ruleTester.run('destructuring-assignment', rule, {
       }
     };`,
     errors: [
-      {message: 'Must use destructuring context assignment'}
+      { message: 'Must use destructuring context assignment' }
     ]
   }, {
     code: `class Foo extends React.Component {
@@ -236,7 +247,7 @@ ruleTester.run('destructuring-assignment', rule, {
       }
     }`,
     errors: [
-      {message: 'Must use destructuring props assignment'}
+      { message: 'Must use destructuring props assignment' }
     ]
   }, {
     code: `var Hello = React.createClass({
@@ -245,7 +256,7 @@ ruleTester.run('destructuring-assignment', rule, {
       }
     });`,
     errors: [
-      {message: 'Must use destructuring props assignment'}
+      { message: 'Must use destructuring props assignment' }
     ]
   }, {
     code: `
@@ -255,21 +266,21 @@ ruleTester.run('destructuring-assignment', rule, {
         }
       }
     `,
-    errors: [{message: 'Must use destructuring props assignment'}]
+    errors: [{ message: 'Must use destructuring props assignment' }]
   }, {
     code: `
       export default function Foo(props) {
         return <p>{props.a}</p>;
       }
     `,
-    errors: [{message: 'Must use destructuring props assignment'}]
+    errors: [{ message: 'Must use destructuring props assignment' }]
   }, {
     code: `
       function hof() {
         return (props) => <p>{props.a}</p>;
       }
     `,
-    errors: [{message: 'Must use destructuring props assignment'}]
+    errors: [{ message: 'Must use destructuring props assignment' }]
   }, {
     code: `const Foo = class extends React.PureComponent {
       render() {
@@ -278,7 +289,7 @@ ruleTester.run('destructuring-assignment', rule, {
       }
     };`,
     errors: [
-      {message: 'Must use destructuring props assignment'}
+      { message: 'Must use destructuring props assignment' }
     ]
   }, {
     code: `const Foo = class extends React.PureComponent {
@@ -290,7 +301,7 @@ ruleTester.run('destructuring-assignment', rule, {
     options: ['never'],
     parser: parsers.BABEL_ESLINT,
     errors: [
-      {message: 'Must never use destructuring props assignment'}
+      { message: 'Must never use destructuring props assignment' }
     ]
   }, {
     code: `const MyComponent = (props) => {
@@ -300,7 +311,7 @@ ruleTester.run('destructuring-assignment', rule, {
     options: ['never'],
     parser: parsers.BABEL_ESLINT,
     errors: [
-      {message: 'Must never use destructuring props assignment'}
+      { message: 'Must never use destructuring props assignment' }
     ]
   }, {
     code: `const Foo = class extends React.PureComponent {
@@ -312,7 +323,25 @@ ruleTester.run('destructuring-assignment', rule, {
     options: ['never'],
     parser: parsers.BABEL_ESLINT,
     errors: [
-      {message: 'Must never use destructuring state assignment'}
+      { message: 'Must never use destructuring state assignment' }
+    ]
+  }, {
+    code: `const MyComponent = (props) => {
+      const foo = useContext(aContext);
+      return <div>{foo.test}</div>
+    };`,
+    options: ['always'],
+    errors: [
+      { message: 'Must use destructuring foo assignment' }
+    ]
+  }, {
+    code: `const MyComponent = (props) => {
+      const {foo} = useContext(aContext);
+      return <div>{foo}</div>
+    };`,
+    options: ['never'],
+    errors: [
+      { message: 'Must never use destructuring useContext assignment' }
     ]
   }]
 });
